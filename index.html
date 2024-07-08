@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-time Predictions</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <h1>Real-time Predictions</h1>
+    <div id="failure-plot"></div>
+    <div id="error-plot"></div>
+
+    <script>
+        function updatePlots(failureData, errorData) {
+            // Update failure plot
+            Plotly.react('failure-plot', [{
+                y: failureData,
+                type: 'line'
+            }]);
+
+            // Update error plot
+            Plotly.react('error-plot', [{
+                y: errorData,
+                type: 'line'
+            }]);
+        }
+
+        setInterval(function() {
+            // Retrieve latest predictions from the server
+            fetch('/latest_predictions')
+                .then(response => response.json())
+                .then(data => {
+                    updatePlots(data.failure, data.error);
+                });
+        }, 10000);  // Refresh plots every 10 seconds
+    </script>
+</body>
+</html>
